@@ -55,9 +55,11 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
-```
-Your answer...
-```
+One architecture would overwrite the current address directly in a single CUSTOMER_ADDRESS record per customer. In that design, the table might contain `customer_id`, `street_address`, `city`, `province_state`, `postal_code`, `country`, `last_updated`, and perhaps `updated_by`. When a customer moves, the old values are replaced with the new ones. This is a Type 1 slowly changing dimension because it does not preserve address history. It is simpler to maintain and query, and it works well if the business only cares about the customer’s latest mailing address.
+
+The second architecture would retain changes by storing multiple address records per customer over time. In that version, the table could include `customer_address_id`, `customer_id`, `street_address`, `city`, `province_state`, `postal_code`, `country`, `effective_start_date`, `effective_end_date`, and `is_current`. Each time the customer changes address, the current row is closed out by setting an end date and `is_current = 0`, and a new row is inserted for the new address with a new start date and `is_current = 1`. This is a Type 2 slowly changing dimension because it preserves historical versions of the address.
+
+So, the overwrite design is Type 1, and the history-preserving design is Type 2. If the bookstore only needs the latest address for shipping and contact purposes, Type 1 may be enough. If it needs to know where a customer lived at the time of a past order, or wants historical auditability, Type 2 is the better choice.
 
 ***
 
@@ -190,6 +192,14 @@ Read: Boykis, V. (2019, October 16). _Neural nets are just people all the way do
 Consider, for example, concepts of labour, bias, LLM proliferation, moderating content, intersection of technology and society, ect. 
 
 
-```
-Your thoughts...
-```
+One of the biggest ethical issues in this story is that AI systems are often presented as highly automated and objective even though they depend heavily on human labour at every stage. The article shows that behind training data, labels, categories, moderation decisions, and even language resources, there are people making judgment calls. That matters because it challenges the popular idea that machine learning systems are purely technical or neutral. If humans are involved in creating the data and defining the categories, then human limitations, incentives, and biases are also built into the system.
+
+Labour is central here. A great deal of the work behind AI has historically been low-paid, repetitive, and often invisible. Workers on platforms like Mechanical Turk help create datasets that become foundational to profitable technologies, but they may receive little pay, little recognition, and few protections. That raises questions about fairness, power, and who benefits economically from AI systems. Highly valued AI products may depend on people doing tedious work for cents at a time, which can look a lot like exploitation when the workers are treated as interchangeable and hidden.
+
+Bias is another major issue. The categories used to label data do not appear out of nowhere. People decide what counts as a category, what examples belong in it, and what labels are acceptable. Those choices can reflect stereotypes, cultural assumptions, and harmful social hierarchies. The article’s discussion of offensive and nonsensical labels in image datasets shows how easily prejudice can become embedded in technical systems. Once those labels are incorporated into widely used datasets, the bias can spread into downstream products such as facial recognition, search, recommendation systems, and other AI tools.
+
+The story also raises concerns about accountability. When an AI system harms someone, companies sometimes imply that the model is too complex to fully explain, or that the result was an unfortunate technical outcome. But if the system rests on human decisions all the way down, then organizations cannot avoid responsibility. Someone chose the data source, someone defined the taxonomy, someone approved the deployment, and someone decided the risks were acceptable. Ethical AI requires recognizing those choices instead of hiding them behind the language of automation.
+
+Another important issue is the relationship between technology and society. These models are not built in isolation; they reflect existing social values and can reinforce existing inequalities. If flawed datasets are used in policing, hiring, surveillance, or content moderation, the effects can be serious and unevenly distributed. Communities that are already marginalized may bear more of the risk from misclassification and overreach. This makes ethical review especially important when AI systems move from research into real-world decision-making.
+
+Overall, the article argues that AI is not just about algorithms. It is also about workers, institutions, incentives, and social values. The ethical lesson is that we should judge AI systems not only by their technical performance, but also by the labour conditions, data practices, and human choices that make them possible.
